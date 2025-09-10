@@ -66,7 +66,7 @@ minimal_docs
 def text_split(minimal_docs):
     # Use separators to preserve semantic structure (paragraphs, headings)
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
+        chunk_size=1000,
         chunk_overlap=20,
         separators=["\n\n", "\n", ".", " "]
     )
@@ -194,9 +194,6 @@ docsearch = PineconeVectorStore.from_existing_index(
 
 
 
-# %% [markdown]
-# # Add more data to the existing Pinecone index
-
 # %%
 dswith = Document(
     page_content="dswithbappy is a youtube channel that provides tutorials on various topics.",
@@ -214,12 +211,17 @@ retrieved_docs = retriever.invoke("What is Acne?")
 retrieved_docs
 
 # %%
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate
+
+# %%
 # Step 1: Import HuggingFace tools
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain.llms import HuggingFacePipeline
 
 # Step 2: Load your SLM model and tokenizer
-model_name = "tiiuae/falcon-7b-instruct"  # replace with your SLM model
+model_name = "sentence-transformers/all-MiniLM-L6-v2"  # replace with your SLM model
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name)
 
@@ -233,12 +235,6 @@ pipe = pipeline(
 
 # Step 4: Wrap it in LangChain's HuggingFacePipeline
 chatModel = HuggingFacePipeline(pipeline=pipe)
-
-
-# %%
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate
 
 # %%
 system_prompt = (
@@ -262,10 +258,6 @@ prompt = ChatPromptTemplate.from_messages(
 # %%
 question_answer_chain = create_stuff_documents_chain(chatModel, prompt)
 rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-
-# %%
-response = rag_chain.invoke({"input": "what is Acromegaly and gigantism?"})
-print(response["answer"])
 
 # %%
 response = rag_chain.invoke({"input": "what is Acne?"})
