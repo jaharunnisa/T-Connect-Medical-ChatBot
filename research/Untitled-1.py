@@ -115,10 +115,6 @@ load_dotenv()
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
 
-import os
-
-os.environ["OPENAI_API_KEY"] = "pcsk_6zrimc_6tGNs1DBy14VS7TQdwTWz9HfMob5zGWW1Yjj8V2ZBSfewjwrv7EMjcHg5FVsEi4"
-
 
 
 # %%
@@ -133,9 +129,6 @@ pc
 
 # %%
 from pinecone import Pinecone, ServerlessSpec
-
-
-API_KEY = "pcsk_6zrimc_6tGNs1DBy14VS7TQdwTWz9HfMob5zGWW1Yjj8V2ZBSfewjwrv7EMjcHg5FVsEi4"
 
 # Create Pinecone client
 pc = Pinecone(
@@ -164,9 +157,6 @@ index = pc.Index(index_name)
 print(f"Connected to index: {index_name}")
 
 
-# %%
-import os
-os.environ["PINECONE_API_KEY"] = "pcsk_6zrimc_6tGNs1DBy14VS7TQdwTWz9HfMob5zGWW1Yjj8V2ZBSfewjwrv7EMjcHg5FVsEi4"
 
 
 # %%
@@ -179,12 +169,17 @@ docsearch = PineconeVectorStore.from_documents(
 )
 
 
-# %%
+
+from dotenv import load_dotenv
+import os
 from langchain_pinecone import PineconeVectorStore
 
-# Make sure your API key is in os.environ
-import os
-os.environ["PINECONE_API_KEY"] = "pcsk_6zrimc_6tGNs1DBy14VS7TQdwTWz9HfMob5zGWW1Yjj8V2ZBSfewjwrv7EMjcHg5FVsEi4"
+# Load environment variables from .env
+load_dotenv()
+
+# Set API key securely
+pinecone_api_key = os.getenv("PINECONE_API_KEY")
+os.environ["PINECONE_API_KEY"] = pinecone_api_key
 
 # Connect to existing index
 docsearch = PineconeVectorStore.from_existing_index(
